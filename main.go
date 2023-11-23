@@ -23,10 +23,53 @@ var sessionName string
 
 func init() {
 	flag.StringVar(&sessionName, "name", "default", "session name in .sessionrc")
-	_ = flag.Parsed()
+	flag.Parse()
 }
 
 func main() {
+	// kill session
+	exec.Command("tmux", "kill-session", "-t", sessionName).Run()
+
+	session := sessions()
+
+	for i, cfg := range session {
+		if i == 0 {
+			// create tmux session
+			cmd := exec.Command("tmux", "new-session", "-d", "-s", sessionName, "-n", cfg.Name)
+			if err := cmd.Run(); err != nil {
+				log.Fatalf("error occur when create tmux workspaces: %v", err)
+			}
+			continue
+		}
+
+		cmd := exec.Command(
+			"tmux", "send-keys",
+			"-t", sessionName,
+			fmt.Sprintf("tmux new-window -n %s", cfg.Name),
+			"C-m",
+		)
+
+		if err := cmd.Run(); err != nil {
+			log.Fatalf("error occur when create tmux workspaces: %v", err)
+		}
+	}
+
+	for i, cfg := range session {
+		time.Sleep(time.Second)
+		cmd := exec.Command(
+			"tmux", "send-keys",
+			"-t", fmt.Sprintf("%s:%d", sessionName, i+1),
+			fmt.Sprintf("cd %s", cfg.Path),
+			"C-m",
+		)
+
+		if err := cmd.Run(); err != nil {
+			log.Fatalf("error occur when create tmux workspaces: %v", err)
+		}
+	}
+}
+
+func sessions() []workspace {
 	// Get the current user's home directory
 	usr, err := user.Current()
 	if err != nil {
@@ -50,62 +93,7 @@ func main() {
 		log.Fatalf("error occur when open file: %v", err)
 	}
 
-	// create tmux workspace
-	cmd := exec.Command("tmux", "new-session", "-d", "-s", sessionName)
-	cmd.Stdout = os.Stdout
-	cmd.Stderr = os.Stdout
-	if err := cmd.Run(); err != nil {
-		log.Fatalf("error occur when create tmux workspaces: %v", err)
-	}
-
-	for _, cfg := range workspaces[sessionName] {
-		cmd := exec.Command(
-			"tmux", "send-keys",
-			"-t", sessionName,
-			fmt.Sprintf("tmux new-window -n %s", cfg.Name),
-			"C-m",
-		)
-
-		cmd.Stdout = os.Stdout
-		cmd.Stderr = os.Stdout
-
-		if err := cmd.Run(); err != nil {
-			log.Fatalf("error occur when create tmux workspaces: %v", err)
-		}
-	}
-
-	for i, cfg := range workspaces[sessionName] {
-		time.Sleep(time.Second)
-
-		cmd := exec.Command(
-			"tmux", "send-keys",
-			"-t", fmt.Sprintf("%s:%d", sessionName, i+2),
-			fmt.Sprintf("cd %s", cfg.Path),
-			"C-m",
-		)
-
-		if err := cmd.Run(); err != nil {
-			log.Fatalf("error occur when create tmux workspaces: %v", err)
-		}
-	}
-
-	// if baseInd, err := getBaseWindowIndex(sessionName); err == nil {
-	// 	time.Sleep(time.Second * 5)
-	// 	// remove first tmux
-	// 	cmd = exec.Command(
-	// 		"tmux", "send-keys",
-	// 		"-t", sessionName,
-	// 		strings.Join([]string{"tmux kill-window -t", baseInd}, " "),
-	// 		"C-m",
-	// 	)
-	//
-	// 	cmd.Stdout = os.Stdout
-	// 	cmd.Stderr = os.Stdout
-	//
-	// 	if err := cmd.Run(); err != nil {
-	// 		log.Fatalf("error occur when create tmux workspaces: %v", err)
-	// 	}
-	// }
+	return workspaces[sessionName]
 }
 
 func getBaseWindowIndex(sessionName string) (string, error) {

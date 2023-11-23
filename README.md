@@ -38,5 +38,11 @@ Trong đó
 - Go user
 
 ```sh
-go install github.com/tooltoys/tmux-workspace@latest
+go install github.com/tooltoys/tmux-session@latest
+```
+
+3. Usage
+
+```sh
+tmux-session -name=default
 ```
