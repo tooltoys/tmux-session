@@ -73,7 +73,7 @@ func sessions() []workspace {
 	// Get the current user's home directory
 	usr, err := user.Current()
 	if err != nil {
-		log.Fatalf("Error getting current user:", err)
+		log.Fatalf("Error getting current user: %v", err)
 	}
 
 	// Construct the full path to the ~/.sessionrc file

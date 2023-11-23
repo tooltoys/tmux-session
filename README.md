@@ -38,7 +38,7 @@ Trong đó
 - Go user
 
 ```sh
-go install github.com/tooltoys/tmux-session@latest
+go install github.com/tooltoys/tmux-session@v1.0.1
 ```
 
 3. Usage
