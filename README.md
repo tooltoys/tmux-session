@@ -6,17 +6,17 @@ Tạo tab tmux, rename với json config.
 {
   "default": [
     {
-      "path": "/home/ubuntu/code/learning/dsa/algorithm",
+      "path": "/home/ubuntu/algorithm",
       "name": "algo"
     },
     {
-      "path": "/home/ubuntu/code/learning/backend/golang",
+      "path": "/home/ubuntu/music",
       "name": "go"
     }
   ],
   "backend": [
     {
-      "path": "/home/ubuntu/code/learning/backend/golang",
+      "path": "/home/ubuntu/backend",
       "name": "go"
     }
   ]
@@ -35,9 +35,9 @@ Trong đó
 
 2. Download 
 
-- Go user
 
 ```sh
+# Gopher
 go install github.com/tooltoys/tmux-session@v1.0.1
 ```
 
