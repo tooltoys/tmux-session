@@ -1,3 +1,3 @@
-module tmux-workspace
+module github.com/tooltoys/tmux-workspace
 
 go 1.20

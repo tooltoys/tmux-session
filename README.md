@@ -28,3 +28,15 @@ Trong đó
 + default: tên session
 + path: là đường dẫn đến dir cần thao tác.
 + name: custom name cho tmux panel. 
+
+## Installation
+
+1. Tạo file ~/.sessionrc 
+
+2. Download 
+
+- Go user
+
+```sh
+go install github.com/tooltoys/tmux-workspace@latest
+```
